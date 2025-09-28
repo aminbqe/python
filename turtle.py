@@ -44,9 +44,14 @@ for i in range (a):
         t.right(180)
         t.forward(x*0.395)
         t.left(90)
-        t.pendown()
         t.begin_fill()
-        t.fillcolor(1,1-x/100,1-x/100)
+        t.pendown()
+        if x > 75:
+            t.fillcolor(1,math.exp(-pow(x / 100, 5)), math.exp(-pow(x / 100, 5)))
+        elif x < 25:
+            t.fillcolor(math.exp(-pow(x / 25, 5)),math.exp(-pow(x / 25, 5)), 1)
+        else:
+            t.fillcolor(1,(math.exp(-pow(x / 75, 5))) / (x / 20), 1)
         t.circle(x*0.395)
         t.end_fill()
         t.penup()
