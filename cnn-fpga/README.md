@@ -14,6 +14,7 @@ Despite the folder name, the trained model is a **patch classifier** rather than
 | fpga/export_weights.py | Converts the .npz tensors into signed fixed-point VHDL constants. |
 | fpga/cnn_weights_pkg.vhd | Generated constants for the current trained model. Add this package before the core. |
 | fpga/patch_classifier.vhd | Board-independent inference core. |
+| docs/cnn_code_guide_beginner.pdf | AI-assisted, beginner-friendly guide to the Python training program. |
 
 Generated images, virtual environments, IDE settings, caches, and FPGA tool build products are excluded by .gitignore.
 
@@ -21,13 +22,13 @@ Generated images, virtual environments, IDE settings, caches, and FPGA tool buil
 
 Use Python 3.10+ in this folder:
 
-\`\`\`powershell
+```powershell
 cd cnn-fpga
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 python train.py
-\`\`\`
+```
 
 train.py uses a fixed random seed, builds 150 synthetic 32 x 32 RGB training images, and trains a single-hidden-layer ReLU network. Its classes are:
 
@@ -44,17 +45,17 @@ The script overwrites segmentation_model.npz with newly trained float parameters
 
 For every pixel, Python obtains the centered 5 x 5 neighborhood. Each patch pixel contributes four normalized features in this exact order:
 
-\`\`\`text
+```text
 R, G, B, brightness
-\`\`\`
+```
 
 Rows are scanned top-to-bottom and pixels left-to-right, giving 25 x 4 = 100 inputs. The model calculation is:
 
-\`\`\`text
+```text
 hidden = ReLU(features @ weights_1 + bias_1)    # 100 -> 32
 scores = hidden @ weights_2 + bias_2            # 32 -> 4
 class  = argmax(scores)
-\`\`\`
+```
 
 Python uses floating point during training. The FPGA does inference only; it does not perform back-propagation or update weights.
 
@@ -62,9 +63,9 @@ Python uses floating point during training. The FPGA does inference only; it doe
 
 After every training run, regenerate the package from the matching model:
 
-\`\`\`powershell
+```powershell
 python fpga\export_weights.py
-\`\`\`
+```
 
 The exporter reads segmentation_model.npz and writes fpga/cnn_weights_pkg.vhd. Commit the model archive and the generated package together. This keeps the Python and FPGA implementations traceable to the same trained network.
 
@@ -113,7 +114,7 @@ The core entity is patch_classifier:
 
 patch_classifier.vhd evaluates one patch. A camera or frame-buffer wrapper converts an image stream into patches:
 
-\`\`\`text
+```text
 camera / frame buffer
         -> RGB pixel stream
         -> four line buffers + 5 x 5 shift-register window
@@ -121,7 +122,7 @@ camera / frame buffer
         -> serialize 100 Q8 features
         -> patch_classifier
         -> result-class stream / color overlay / memory writer
-\`\`\`
+```
 
 Use four previous-line buffers and five pixel registers per line to form a centered 5 x 5 window from a raster stream. At image borders, match Python's edge-padding rule in train.py; otherwise predictions can differ. For each pixel channel use the same normalized range: q8 = round(channel_8bit * 256 / 255). Calculate brightness exactly as Python does before quantizing it, then send the feature order defined above.
 
@@ -133,11 +134,11 @@ Use a VHDL testbench that feeds known patches in the same order and Q8 format as
 
 ## Regeneration checklist
 
-\`\`\`text
+```text
 change model or training data
         -> python train.py
         -> python fpga\export_weights.py
         -> simulate VHDL against Python reference patches
         -> synthesize with regenerated cnn_weights_pkg.vhd
         -> program FPGA and validate image output
-\`\`\`
+```
