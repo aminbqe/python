@@ -39,7 +39,7 @@ By default, the utility reads state and creates a backup and deployment plan. It
 
 | Symptom | Check |
 | --- | --- |
-| Upload returns 401 | Correct administrator-provided password and hash configuration; the form clears its password after 401 |
+| Upload returns 401 | Administrator: check your private password and hash configuration; the form clears its password after 401. Users should deliver files to the administrator rather than request the password. |
 | Upload returns 503 | Password hash configuration or agent connectivity; inspect the response message |
 | Upload returns 409 | A previous session still exists |
 | JTAG works but UART is disconnected | Bitstream template, pin assignments, logic levels, serial console, and baud rate |

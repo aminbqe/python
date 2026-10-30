@@ -11,6 +11,8 @@ Run digital designs on a **physical ALINX AX309 / Spartan-6 XC6SLX9-2FTG256C FPG
 
 ## Workflow
 
+Users prepare and compile their projects, then deliver them to the administrator through an agreed channel. The administrator keeps the upload password private and programs the board. Users test their design in the panel after confirmation. The site currently has no submission or approval queue. See the [step-by-step user guide](docs/USER_GUIDE.md) for the separate user and administrator tasks.
+
 ```text
 User Verilog -> converter and port mapping -> Verilog/UCF project
 -> build lab_top.bit with ISE on the user's computer
