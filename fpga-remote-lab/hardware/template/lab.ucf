@@ -1,0 +1,11 @@
+NET "clk" LOC = "T8" | IOSTANDARD = LVCMOS33;
+NET "clk" TNM_NET = "clk_group";
+TIMESPEC "TS_clk" = PERIOD "clk_group" 20 ns HIGH 50%;
+NET "led_pins<0>" LOC = "P4" | IOSTANDARD = LVCMOS33;
+NET "led_pins<1>" LOC = "N5" | IOSTANDARD = LVCMOS33;
+NET "led_pins<2>" LOC = "P5" | IOSTANDARD = LVCMOS33;
+NET "led_pins<3>" LOC = "M6" | IOSTANDARD = LVCMOS33;
+# Proposed AX309 expansion pins. Verify board revision and bank voltage.
+# J2 pin 3 = K16 = TX. J2 pin 5 = L16 = RX. J2 pin 1 = GND.
+NET "lab_tx" LOC = "K16" | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW;
+NET "lab_rx" LOC = "L16" | IOSTANDARD = LVCMOS33 | PULLUP;

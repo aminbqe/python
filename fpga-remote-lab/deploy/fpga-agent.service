@@ -1,0 +1,14 @@
+[Unit]
+Description=FPGA JTAG and UART worker
+After=fpga-lab.service
+
+[Service]
+WorkingDirectory=%h/fpga-sim
+EnvironmentFile=%h/fpga-sim/.env
+ExecStart=%h/fpga-sim/.venv/bin/python pi_agent.py
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

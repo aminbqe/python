@@ -1,0 +1,16 @@
+const fs=require('node:fs');
+const vm=require('node:vm');
+const assert=require('node:assert/strict');
+const context=vm.createContext({TextEncoder,Blob});
+for(const path of ['deploy/cpanel/fpga/templates.js','deploy/cpanel/fpga/core.js'])vm.runInContext(fs.readFileSync(path,'utf8'),context);
+const source='module full_adder(input a,b,cin,output sum,cout); assign sum=a^b^cin; assign cout=(a&b)|(a&cin)|(b&cin); endmodule';
+const mapping={a:'switches:0',b:'switches:1',cin:'switches:2',sum:'leds:0',cout:'leds:1'};
+context.source=source;context.mapping=mapping;
+const files=vm.runInContext("generateHDL(source,'full_adder',mapping)",context);
+assert.equal(files.find(f=>f.name==='design.v').content,source);
+assert.match(files.find(f=>f.name==='user_logic.v').content,/\.cin\(switches\[2:2\]\)/);
+assert.equal(vm.runInContext("inspectHDL('module test(a,b,q); input [3:0] a,b; output q; endmodule')[0].ports[1].width",context),4);
+assert.throws(()=>vm.runInContext("generateHDL(source,'full_adder',{...mapping,cout:'leds:0'})",context),/مشترک/);
+assert.throws(()=>vm.runInContext("inspectHDL('module x(inout a); endmodule')",context),/inout/);
+const blob=vm.runInContext("projectZIP(generateHDL(source,'full_adder',mapping))",context);
+blob.arrayBuffer().then(buffer=>{fs.writeFileSync('deploy/browser-test.zip',Buffer.from(buffer));console.log('PASS: browser converter, port mapping, rejection, ZIP generated')});

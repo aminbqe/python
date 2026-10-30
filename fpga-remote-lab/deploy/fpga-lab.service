@@ -1,0 +1,15 @@
+[Unit]
+Description=AX309 Remote FPGA Lab
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/fpga-sim
+ExecStart=%h/fpga-sim/.venv/bin/uvicorn server:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=3
+EnvironmentFile=-%h/fpga-sim/.env
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

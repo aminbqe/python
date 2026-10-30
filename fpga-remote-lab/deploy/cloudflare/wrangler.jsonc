@@ -1,0 +1,13 @@
+{
+  "name": "fpga-rasp-router",
+  "main": "rasp-worker.mjs",
+  "compatibility_date": "2026-10-30",
+  "workers_dev": false,
+  "preview_urls": false,
+  "vars": {
+    "RASP_ORIGIN": "https://rasp-origin.aminbagheri.com"
+  },
+  "routes": [
+    { "pattern": "aminbagheri.com/rasp*", "zone_name": "aminbagheri.com" }
+  ]
+}

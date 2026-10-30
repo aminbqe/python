@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+.deploy-wheels/
+backups/
+uploads/
+exports/
+*.bit
+*.zip
+*.jsonl
+*.pem
+*.key
+*password*.txt
+*token*.txt

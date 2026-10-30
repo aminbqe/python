@@ -1,0 +1,9 @@
+DirectoryIndex index.html
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|js|css)$">
+    Header always set Cache-Control "no-store, max-age=0"
+  </FilesMatch>
+</IfModule>
+<IfModule mod_expires.c>
+  ExpiresActive Off
+</IfModule>
